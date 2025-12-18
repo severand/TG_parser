@@ -326,18 +326,26 @@ class MessageProcessor:
             if not msg_id:
                 raise ValidationException("Message ID is required")
 
+            # Create author User object
+            author_name = metadata.get('author') or 'Unknown'
+            author = User(
+                id=str(channel_id),
+                username=author_name,
+                first_name=author_name
+            )
+
             # Create Message object
             message = Message(
-                id=msg_id,
-                channel_id=channel_id,
-                author=metadata.get('author'),
+                id=str(msg_id),
+                channel_id=str(channel_id),
+                author=author,
                 text=text,
-                timestamp=metadata.get('timestamp'),
+                timestamp=str(metadata.get('timestamp') or ''),
                 views=metadata.get('views') or 0,
                 reactions=len(metadata.get('reactions', [])),
-                mentions=MessageProcessor.extract_mentions(text),
-                hashtags=MessageProcessor.extract_hashtags(text),
-                urls=MessageProcessor.extract_urls(text),
+                mentions=tuple(MessageProcessor.extract_mentions(text)),
+                hashtags=tuple(MessageProcessor.extract_hashtags(text)),
+                urls=tuple(MessageProcessor.extract_urls(text)),
                 edited=metadata.get('edited', False),
                 pinned=metadata.get('pinned', False),
             )

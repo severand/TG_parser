@@ -139,6 +139,7 @@ class User:
         )
 
 
+
 @dataclass(frozen=True)
 class Message:
     """Telegram message data.
@@ -153,6 +154,11 @@ class Message:
         timestamp: Message posting timestamp
         views: Number of views (if available)
         reactions: Number/dict of reactions (if available)
+        mentions: List of mentioned usernames
+        hashtags: List of hashtags
+        urls: List of URLs in message
+        edited: Whether message was edited
+        pinned: Whether message is pinned
     """
 
     id: str
@@ -162,6 +168,11 @@ class Message:
     timestamp: str
     views: int = 0
     reactions: int = 0
+    mentions: tuple = ()
+    hashtags: tuple = ()
+    urls: tuple = ()
+    edited: bool = False
+    pinned: bool = False
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert Message to dictionary.
@@ -171,6 +182,9 @@ class Message:
         """
         data = asdict(self)
         data['author'] = self.author.to_dict()
+        data['mentions'] = list(self.mentions)
+        data['hashtags'] = list(self.hashtags)
+        data['urls'] = list(self.urls)
         return data
 
     @staticmethod
@@ -205,7 +219,13 @@ class Message:
             timestamp=str(data['timestamp']),
             views=int(data.get('views', 0)),
             reactions=int(data.get('reactions', 0)),
+            mentions=tuple(data.get('mentions', [])),
+            hashtags=tuple(data.get('hashtags', [])),
+            urls=tuple(data.get('urls', [])),
+            edited=bool(data.get('edited', False)),
+            pinned=bool(data.get('pinned', False)),
         )
+
 
 
 @dataclass(frozen=True)

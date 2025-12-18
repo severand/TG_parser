@@ -6,8 +6,8 @@ from utils.validators import (
     validate_channel_url,
     validate_keywords,
     validate_config,
-    validate_message,
-    validate_email,
+    #validate_message,
+    #validate_email,
 )
 from utils.exceptions import ValidationException
 

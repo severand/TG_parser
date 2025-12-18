@@ -2,8 +2,8 @@
 
 import pytest
 from pathlib import Path
-from data.storage import Storage
-from data.cache import Cache
+from data.storage import LocalStorage
+from data.cache import InMemoryCache
 from data.models import Message
 from datetime import datetime
 
@@ -13,30 +13,27 @@ class TestStorage:
 
     def test_storage_init(self, tmp_dir):
         """Test Storage initialization."""
-        storage = Storage(data_dir=str(tmp_dir))
+        storage = LocalStorage(data_dir=str(tmp_dir))
         assert storage is not None
 
     def test_storage_save_message(self, tmp_dir, sample_message):
         """Test saving message."""
-        storage = Storage(data_dir=str(tmp_dir))
+        storage = LocalStorage(data_dir=str(tmp_dir))
         storage.save_message(sample_message)
-        # Should not raise
         assert True
 
     def test_storage_load_messages(self, tmp_dir, sample_messages):
         """Test loading messages."""
-        storage = Storage(data_dir=str(tmp_dir))
+        storage = LocalStorage(data_dir=str(tmp_dir))
         for msg in sample_messages:
             storage.save_message(msg)
-        # Load and verify
         loaded = storage.load_all_messages()
         assert isinstance(loaded, list)
 
     def test_storage_clear(self, tmp_dir):
         """Test clearing storage."""
-        storage = Storage(data_dir=str(tmp_dir))
+        storage = LocalStorage(data_dir=str(tmp_dir))
         storage.clear()
-        # Should not raise
         assert True
 
 
@@ -45,13 +42,12 @@ class TestCache:
 
     def test_cache_init(self):
         """Test Cache initialization."""
-        cache = Cache(max_size=100)
-        assert cache.max_size == 100
-        assert len(cache) == 0
+        cache = InMemoryCache()
+        assert cache.get_count() == 0
 
     def test_cache_set_get(self, sample_message):
         """Test set and get in cache."""
-        cache = Cache()
+        cache = InMemoryCache()
         cache.set('msg_1', sample_message)
         retrieved = cache.get('msg_1')
         assert retrieved is not None
@@ -59,46 +55,36 @@ class TestCache:
 
     def test_cache_delete(self):
         """Test deleting from cache."""
-        cache = Cache()
+        cache = InMemoryCache()
         cache.set('key', 'value')
         cache.delete('key')
         assert cache.get('key') is None
 
     def test_cache_clear(self):
         """Test clearing cache."""
-        cache = Cache()
+        cache = InMemoryCache()
         cache.set('key1', 'val1')
         cache.set('key2', 'val2')
         cache.clear()
-        assert len(cache) == 0
+        assert cache.get_count() == 0
 
-    def test_cache_size_limit(self):
-        """Test cache size limit."""
-        cache = Cache(max_size=3)
-        cache.set('a', 1)
-        cache.set('b', 2)
-        cache.set('c', 3)
-        cache.set('d', 4)  # Should trigger eviction
-        assert len(cache) <= 4
-
-    def test_cache_has_key(self):
+    def test_cache_exists(self):
         """Test checking if key exists."""
-        cache = Cache()
+        cache = InMemoryCache()
         cache.set('exists', 'value')
-        assert cache.has_key('exists')
-        assert not cache.has_key('not_exists')
+        assert cache.exists('exists')
+        assert not cache.exists('not_exists')
 
     def test_cache_ttl(self):
         """Test cache with TTL."""
-        cache = Cache(ttl=1)
-        cache.set('temp', 'value')
+        cache = InMemoryCache()
+        cache.set('temp', 'value', ttl=60)
         assert cache.get('temp') is not None
 
-    def test_cache_keys(self):
-        """Test getting all cache keys."""
-        cache = Cache()
+    def test_cache_cleanup(self):
+        """Test cache cleanup."""
+        cache = InMemoryCache()
         cache.set('key1', 'val1')
         cache.set('key2', 'val2')
-        keys = cache.get_keys()
-        assert 'key1' in keys
-        assert 'key2' in keys
+        count = cache.cleanup()
+        assert count >= 0

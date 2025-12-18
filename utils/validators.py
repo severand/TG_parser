@@ -8,7 +8,8 @@ from utils.exceptions import ValidationException
 class Validators:
     """Collection of validation functions."""
 
-    TELEGRAM_URL_PATTERN = r'^(https?://)?(www\.)?t\.me/[a-zA-Z0-9_]{5,32}/?$'
+    TELEGRAM_URL_PATTERN = r'^(https?://)?(www\.)?t\.me/(s/)?[a-zA-Z0-9_]{5,32}/?$'
+
     CHANNEL_USERNAME_PATTERN = r'^[a-zA-Z0-9_]{5,32}$'
 
     @staticmethod

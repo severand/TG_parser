@@ -1,3 +1,4 @@
+
 """Custom exception classes for Telegram Parser.
 
 Defines a hierarchy of exceptions for different error types:
@@ -67,6 +68,17 @@ class StorageException(ParserException):
 
     Example:
         >>> raise StorageException("Failed to write to storage: disk full")
+    """
+
+    pass
+
+class RateLimitException(NetworkException):
+    """Exception raised when rate limited by server.
+
+    Raised when receiving 429 status or similar rate limiting response.
+
+    Example:
+        >>> raise RateLimitException("Rate limited, retry after 60 seconds")
     """
 
     pass
