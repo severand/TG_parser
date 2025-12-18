@@ -1,7 +1,7 @@
 """Telegram API finder for searching channels and chats."""
 
 from typing import List, Optional
-from config import API_ID, API_HASH, PHONE_NUMBER
+from telegram_config import API_ID, API_HASH, PHONE_NUMBER  # FIXED IMPORT
 from telethon import TelegramClient
 from telethon.errors import SessionPasswordNeededError
 from data.models import Channel
