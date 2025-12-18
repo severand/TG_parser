@@ -1,1 +1,1 @@
-"""Testing suite."""
+"""Tests package for TG Parser."""
