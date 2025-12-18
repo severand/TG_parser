@@ -1,0 +1,28 @@
+{
+  "parser": {
+    "max_threads": 5,
+    "timeout": 30,
+    "max_retries": 3,
+    "delay_min": 1,
+    "delay_max": 5,
+    "max_messages_per_channel": 1000
+  },
+  "network": {
+    "use_proxy": false,
+    "proxy_url": null,
+    "verify_ssl": true,
+    "follow_redirects": true
+  },
+  "output": {
+    "format": "console",
+    "directory": "results/",
+    "json_indent": 2,
+    "csv_delimiter": ","
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "logs/parser.log",
+    "console": true,
+    "max_file_size": 10485760
+  }
+}
